@@ -1,0 +1,25 @@
+// Proposed definitions. Add separately in Power BI; not runtime-tested.
+Incoming Orders = SUM(FactDelivery[IncomingOrders])
+Completed Orders = SUM(FactDelivery[CompletedOrders])
+Delivery Paid Hours =
+    SUM(FactDelivery[NativePaidHours]) + SUM(FactDelivery[TempPaidHours])
+Orders per Paid Hour = DIVIDE([Completed Orders], [Delivery Paid Hours])
+Transferred Hours = SUM(FactDelivery[TempPaidHours])
+Training Hours = SUM(FactDelivery[TrainingHours])
+
+Closing Backlog =
+VAR LastVisibleDate = MAX(DimDate[DateKey])
+RETURN CALCULATE(
+    MAX(FactDelivery[ClosingBacklog]),
+    KEEPFILTERS(DimDate[DateKey] = LastVisibleDate)
+)
+Peak Backlog = MAX(FactDelivery[ClosingBacklog])
+Peak to Closing Reduction =
+    DIVIDE([Peak Backlog] - [Closing Backlog], [Peak Backlog])
+Average Daily Backlog = AVERAGE(FactDelivery[ClosingBacklog])
+Department Load =
+    DIVIDE(
+        SUM(FactLabour[RequiredEffectiveHours]),
+        SUM(FactLabour[EffectiveAvailableHours])
+    )
+Spare Effective Hours = SUM(FactLabour[SpareEffectiveHours])
