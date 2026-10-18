@@ -10,8 +10,8 @@ This portfolio connects business questions with Excel analysis, performance repo
 
 | Project | Business question | Evidence to explore |
 |---|---|---|
-| [Holiday Demand Forecasting and Revenue Analysis](forecasting-revenue-analysis/) | How can forecast evaluation, shortages and substitute sales inform revenue decisions? | Excel workbook, two-page case study, 366 synthetic item-day records, forecast error checks and Power BI specifications |
-| [Backlog Recovery and Workforce Scenario Analysis](backlog-workforce-analysis/) | How can a business compare resource allocation options while tracking backlog and department cover? | Excel workbook, two-page case study, 42-day synthetic model, capacity and productivity calculations, and Power BI model notes |
+| [Holiday Demand Forecasting and Revenue Analysis](https://github.com/Akshay-Cpu/business-analytics-portfolio/tree/main/forecasting-revenue-analysis) | How can forecast evaluation, shortages and substitute sales inform revenue decisions? | Excel workbook, two-page case study, 366 synthetic item-day records, forecast error checks and Power BI specifications |
+| [Backlog Recovery and Workforce Scenario Analysis](https://github.com/Akshay-Cpu/business-analytics-portfolio/tree/main/backlog-workforce-analysis) | How can a business compare resource allocation options while tracking backlog and department cover? | Excel workbook, two-page case study, 42-day synthetic model, capacity and productivity calculations, and Power BI model notes |
 
 Start with each project's case study for the business story, then open the workbook and supporting methodology to trace the calculations.
 
