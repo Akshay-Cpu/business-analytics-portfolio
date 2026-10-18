@@ -1,0 +1,64 @@
+// Add each definition separately. For the proposed one-page report; not runtime-tested in Power BI.
+// Import Daily_Analysis.csv as FactDaily; Items.csv as Items;
+// Daily_Targets.csv as Targets. Create the Date table below.
+
+Date =
+ADDCOLUMNS (
+    CALENDAR ( DATE(2025,1,1), DATE(2025,12,31) ),
+    "Month", FORMAT ( [Date], "yyyy-MM" ),
+    "Weekday", WEEKDAY ( [Date], 2 )
+)
+
+Revenue GBP = SUM ( FactDaily[RevenueGBP] )
+Demand Units = SUM ( FactDaily[DemandUnits] )
+Sales Units = SUM ( FactDaily[SalesUnits] )
+Shortage Requests = SUM ( FactDaily[ShortageUnits] )
+Unserved Requests = SUM ( FactDaily[UnservedUnits] )
+Transferred Requests = SUM ( FactDaily[TransferOutUnits] )
+Substitute Sales Units = SUM ( FactDaily[TransferInUnits] )
+Substitute Revenue GBP = SUM ( FactDaily[SubstituteRevenueGBP] )
+Unserved Value GBP = SUM ( FactDaily[UnservedValueGBP] )
+Transfer Capture % = DIVIDE ( [Transferred Requests], [Shortage Requests] )
+Stockout Item Days = SUM ( FactDaily[StockoutItemDay] )
+Open Item Days = COUNTROWS ( FILTER ( FactDaily, FactDaily[Period] <> "Closed" ) )
+Stockout Item Day % = DIVIDE ( [Stockout Item Days], [Open Item Days] )
+Stockout Hours = SUM ( FactDaily[StockoutHours] )
+
+// Targets are at date grain and apply to the whole six-item menu.
+// Hide target metrics in item/category context rather than invent item allocations.
+Target GBP =
+IF ( ISCROSSFILTERED ( Items ), BLANK(), SUM ( Targets[RevenueTargetGBP] ) )
+Target Attainment % = DIVIDE ( [Revenue GBP], [Target GBP] )
+Target Gap GBP =
+IF ( ISBLANK ( [Target GBP] ), BLANK(), [Revenue GBP] - [Target GBP] )
+
+Baseline Forecast Units = SUM ( FactDaily[BaselineForecast] )
+Adjusted Forecast Units = SUM ( FactDaily[AdjustedForecast] )
+
+Baseline WAPE % =
+VAR Covered = FILTER ( FactDaily, NOT ISBLANK ( FactDaily[BaselineForecast] ) )
+RETURN DIVIDE (
+    SUMX ( Covered, ABS ( FactDaily[BaselineForecast] - FactDaily[DemandUnits] ) ),
+    SUMX ( Covered, FactDaily[DemandUnits] )
+)
+
+Adjusted WAPE % =
+VAR Covered = FILTER ( FactDaily, NOT ISBLANK ( FactDaily[AdjustedForecast] ) )
+RETURN DIVIDE (
+    SUMX ( Covered, ABS ( FactDaily[AdjustedForecast] - FactDaily[DemandUnits] ) ),
+    SUMX ( Covered, FactDaily[DemandUnits] )
+)
+
+Baseline Bias % =
+VAR Covered = FILTER ( FactDaily, NOT ISBLANK ( FactDaily[BaselineForecast] ) )
+RETURN DIVIDE (
+    SUMX ( Covered, FactDaily[BaselineForecast] - FactDaily[DemandUnits] ),
+    SUMX ( Covered, FactDaily[DemandUnits] )
+)
+
+Adjusted Bias % =
+VAR Covered = FILTER ( FactDaily, NOT ISBLANK ( FactDaily[AdjustedForecast] ) )
+RETURN DIVIDE (
+    SUMX ( Covered, FactDaily[AdjustedForecast] - FactDaily[DemandUnits] ),
+    SUMX ( Covered, FactDaily[DemandUnits] )
+)
